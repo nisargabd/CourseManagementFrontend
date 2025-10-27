@@ -46,11 +46,22 @@ export class CourseFormComponent implements OnInit {
 
   // Form options
   boardOptions = ['State', 'CBSE', 'ICSE'];
-  mediumOptions = ['English', 'Hindi', 'Telugu'];
-  gradeOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+  mediumOptions = ['English','Kannada', 'Hindi', 'Telugu'];
+  gradeOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10','11','12'];
   subjectOptions = [
-    'English', 'Hindi', 'Maths', 'Science', 'Social', 
-    'Physics', 'Chemistry', 'Biology', 'History', 
+    'English', 'Kannada', 'Hindi', 'Maths', 'Science', 'Social', 
+    'Physics', 'Chemistry', 'Biology', 'History','Artificial Intelligence',
+    'Cloud Computing','Data Science','Cyber Security',
+    'Digital Marketing','Entrepreneurship','Ethical Hacking','Graphic Design',
+    'Human Resource Management',
+    'International Business','Java','JavaScript','Machine Learning','Marketing',
+    'Microsoft Office',
+    'Network Security','Python','Robotics','Software Development',
+    'Web Development','AI and Machine Learning','Blockchain','Cybersecurity',
+    'Data Analytics','Digital Marketing','Entrepreneurship','Ethical Hacking',
+    'Graphic Design','Human Resource Management','International Business','Java',
+    'JavaScript','Machine Learning','Marketing','Microsoft Office',
+    'Network Security','Python','Robotics','Software Development','Web Development', 
     'Geography', 'Civics', 'Computer'
   ];
 
@@ -172,6 +183,16 @@ export class CourseFormComponent implements OnInit {
       this.isSubmitting = true;
       const formValue = this.courseForm.value;
       
+      // Build units array from selectedUnits
+      const unitsForCourse = this.selectedUnits.map(unitId => {
+        const unit = this.availableUnits.find(u => u.id === unitId);
+        return {
+          id: unitId,
+          title: unit?.title || '',
+          content: unit?.content || ''
+        };
+      });
+      
       const courseData: Course = {
         name: formValue.name,
         description: formValue.description,
@@ -179,11 +200,10 @@ export class CourseFormComponent implements OnInit {
         medium: formValue.medium,
         grade: formValue.grade,
         subject: formValue.subject,
-        // Don't send units during creation/update - they should be associated separately
-        units: []
+        units: unitsForCourse
       };
 
-      console.log('Submitting course data:', courseData);
+      console.log('Submitting course data with units:', courseData);
 
       if (this.isEditMode && this.courseId) {
         this.updateCourse(courseData);
@@ -204,18 +224,12 @@ export class CourseFormComponent implements OnInit {
     this.courseService.createCourse(courseData).subscribe({
       next: (createdCourse) => {
         console.log('Course created successfully:', createdCourse);
-        
-        // If there are selected units, update them to associate with the new course
-        if (this.selectedUnits.length > 0 && createdCourse.id) {
-          this.associateUnitsWithCourse(createdCourse.id, this.selectedUnits);
-        } else {
-          this.snackBar.open('Course created successfully', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top'
-          });
-          this.router.navigate(['/courses']);
-        }
+        this.snackBar.open('Course created successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top'
+        });
+        this.router.navigate(['/courses']);
       },
       error: (error) => {
         console.error('Error creating course:', error);
@@ -235,18 +249,12 @@ export class CourseFormComponent implements OnInit {
     this.courseService.updateCourse(this.courseId, courseData).subscribe({
       next: (updatedCourse) => {
         console.log('Course updated successfully:', updatedCourse);
-        
-        // If there are selected units, update them to associate with the course
-        if (this.selectedUnits.length > 0) {
-          this.associateUnitsWithCourse(this.courseId!, this.selectedUnits);
-        } else {
-          this.snackBar.open('Course updated successfully', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top'
-          });
-          this.router.navigate(['/courses']);
-        }
+        this.snackBar.open('Course updated successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top'
+        });
+        this.router.navigate(['/courses']);
       },
       error: (error) => {
         console.error('Error updating course:', error);

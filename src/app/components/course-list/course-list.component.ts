@@ -45,11 +45,22 @@ export class CourseListComponent implements OnInit {
 
   // Filter options
   boardOptions = ['State', 'CBSE', 'ICSE'];
-  mediumOptions = ['English', 'Hindi', 'Telugu'];
-  gradeOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+  mediumOptions = ['English','Kannada', 'Hindi', 'Telugu'];
+  gradeOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10','11','12'];
   subjectOptions = [
-    'English', 'Hindi', 'Maths', 'Science', 'Social', 
-    'Physics', 'Chemistry', 'Biology', 'History', 
+    'English', 'Kannada', 'Hindi', 'Maths', 'Science', 'Social', 
+    'Physics', 'Chemistry', 'Biology', 'History','Artificial Intelligence',
+    'Cloud Computing','Data Science','Cyber Security',
+    'Digital Marketing','Entrepreneurship','Ethical Hacking','Graphic Design',
+    'Human Resource Management',
+    'International Business','Java','JavaScript','Machine Learning','Marketing',
+    'Microsoft Office',
+    'Network Security','Python','Robotics','Software Development',
+    'Web Development','AI and Machine Learning','Blockchain','Cybersecurity',
+    'Data Analytics','Digital Marketing','Entrepreneurship','Ethical Hacking',
+    'Graphic Design','Human Resource Management','International Business','Java',
+    'JavaScript','Machine Learning','Marketing','Microsoft Office',
+    'Network Security','Python','Robotics','Software Development','Web Development', 
     'Geography', 'Civics', 'Computer'
   ];
 
