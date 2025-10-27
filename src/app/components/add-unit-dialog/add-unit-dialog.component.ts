@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UnitService } from '../../services/unit.service';
-import { Unit } from '../../models/course.model';
+import { Unit } from '../../models/unit.model';
 
 @Component({
   selector: 'app-add-unit-dialog',
@@ -26,18 +26,18 @@ import { Unit } from '../../models/course.model';
     <mat-dialog-content>
       <form [formGroup]="unitForm">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Unit Name</mat-label>
-          <input matInput formControlName="name" placeholder="Enter unit name">
-          <mat-error *ngIf="unitForm.get('name')?.invalid && unitForm.get('name')?.touched">
-            Unit name is required
+          <mat-label>Unit Title</mat-label>
+          <input matInput formControlName="title" placeholder="Enter unit title">
+          <mat-error *ngIf="unitForm.get('title')?.invalid && unitForm.get('title')?.touched">
+            Unit title is required
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Description</mat-label>
-          <textarea matInput formControlName="description" rows="3" placeholder="Enter unit description"></textarea>
-          <mat-error *ngIf="unitForm.get('description')?.invalid && unitForm.get('description')?.touched">
-            Description is required
+          <mat-label>Content</mat-label>
+          <textarea matInput formControlName="content" rows="3" placeholder="Enter unit content"></textarea>
+          <mat-error *ngIf="unitForm.get('content')?.invalid && unitForm.get('content')?.touched">
+            Content is required
           </mat-error>
         </mat-form-field>
       </form>
@@ -70,8 +70,8 @@ export class AddUnitDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { courseId?: string }
   ) {
     this.unitForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required, Validators.minLength(5)]]
+      title: ['', [Validators.required, Validators.minLength(3)]],
+      content: ['', [Validators.required, Validators.minLength(5)]]
     });
   }
 

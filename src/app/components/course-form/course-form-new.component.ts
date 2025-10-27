@@ -98,7 +98,7 @@ export class CourseFormComponent implements OnInit {
           subject: course.subject || [],
           units: course.units || []
         });
-        this.selectedUnits = course.units?.map(unit => unit.id).filter(id => id) || [];
+        this.selectedUnits = course.units?.map(unit => unit.id).filter((id): id is string => id !== undefined) || [];
       },
       error: (error) => {
         console.error('Error loading course:', error);
@@ -127,6 +127,17 @@ export class CourseFormComponent implements OnInit {
     if (this.courseForm.valid && !this.isSubmitting) {
       this.isSubmitting = true;
       const formValue = this.courseForm.value;
+      
+      // Build units array from selectedUnits with full unit data
+      const unitsForCourse = this.selectedUnits.map(unitId => {
+        const unit = this.availableUnits.find(u => u.id === unitId);
+        return {
+          id: unitId,
+          title: unit?.title || '',
+          content: unit?.content || ''
+        };
+      });
+      
       const courseData: Course = {
         name: formValue.name,
         description: formValue.description,
@@ -134,7 +145,7 @@ export class CourseFormComponent implements OnInit {
         medium: formValue.medium,
         grade: formValue.grade,
         subject: formValue.subject,
-        units: this.selectedUnits.map(unitId => ({ id: unitId }))
+        units: unitsForCourse
       };
 
       if (this.isEditMode && this.courseId) {
