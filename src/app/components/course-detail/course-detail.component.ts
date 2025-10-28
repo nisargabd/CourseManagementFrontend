@@ -9,7 +9,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 import { CourseService } from '../../services/course.service';
 import { Course } from '../../models/course.model';
-import { JoinListPipe } from '../../pipes/join-list.pipe';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -23,7 +22,6 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
     MatSnackBarModule,
     MatDialogModule,
     MatChipsModule,
-    JoinListPipe,
     ConfirmDialogComponent
   ],
   templateUrl: './course-detail.component.html',
