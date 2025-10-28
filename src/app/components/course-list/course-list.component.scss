@@ -306,15 +306,15 @@
 // Top Bar
 .top-bar {
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  padding: 28px 36px;
+  padding: 16px 24px;
   display: flex;
   align-items: center;
-  gap: 28px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  gap: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
   z-index: 100;
-  border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
   backdrop-filter: blur(20px);
 
   .search-container {
@@ -328,29 +328,27 @@
       ::ng-deep {
         .mat-mdc-form-field {
           background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-          border-radius: 16px;
-          box-shadow: 0 8px 32px rgba(102, 126, 234, 0.15);
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          border: 2px solid rgba(102, 126, 234, 0.2);
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          border: 1px solid rgba(102, 126, 234, 0.2);
 
           &:hover {
-            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.2);
-            border-color: rgba(102, 126, 234, 0.4);
-            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
           }
 
           &.mat-focused {
             border-color: #667eea;
-            box-shadow: 0 16px 48px rgba(102, 126, 234, 0.25);
-            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
           }
         }
 
         .mat-mdc-text-field-wrapper {
           background: transparent;
-          border-radius: 16px;
-          padding: 16px 20px;
-          min-height: 56px;
+          border-radius: 8px;
+          padding: 8px 16px;
+          min-height: 40px;
           position: relative;
           z-index: 1;
         }
@@ -378,33 +376,34 @@
 
       .search-icon {
         color: #667eea;
-        margin-right: 20px;
-        font-size: 28px;
-        width: 28px;
-        height: 28px;
+        margin-right: 12px;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
         transition: all 0.3s ease;
         z-index: 2;
         position: relative;
       }
 
       input {
-        font-size: 18px;
-        padding: 8px 0;
+        font-size: 16px;
+        padding: 4px 0;
         color: #2c3e50;
-        font-weight: 600;
-        letter-spacing: 0.3px;
+        font-weight: 500;
+        letter-spacing: 0.2px;
         position: relative;
         z-index: 2;
 
         &::placeholder {
           color: #7f8c8d;
-          font-weight: 500;
-          font-size: 16px;
-          letter-spacing: 0.2px;
+          font-weight: 400;
+          font-size: 14px;
+          letter-spacing: 0.1px;
         }
 
         &:focus {
           color: #667eea;
+          font-weight: 600;
         }
 
         &:focus {
@@ -415,25 +414,25 @@
   }
 
   .add-course-btn {
-    padding: 0 32px;
-    height: 56px;
-    font-size: 16px;
-    font-weight: 700;
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0 24px;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
       background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
     }
 
     &:active {
-      transform: translateY(-1px);
+      transform: translateY(0);
     }
 
     mat-icon {

@@ -36,7 +36,8 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
     MatDialogModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    JoinListPipe
+    JoinListPipe,
+    ConfirmDialogComponent
   ],
   templateUrl: './course-list.component.html',
   styleUrls: ['./course-list.component.scss']
