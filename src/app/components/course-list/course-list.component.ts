@@ -11,7 +11,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CourseService } from '../../services/course.service';
+import { FilterOptionsService, FilterOptions } from '../../services/filter-options.service';
 import { Course, CourseFilter } from '../../models/course.model';
 import { JoinListPipe } from '../../pipes/join-list.pipe';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
@@ -31,6 +34,8 @@ import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.compone
     MatIconModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
     JoinListPipe,
     ConfirmDialogComponent
   ],
@@ -42,51 +47,109 @@ export class CourseListComponent implements OnInit {
   filteredCourses: Course[] = [];
   searchTerm: string = '';
   filters: CourseFilter = {};
+  
+  // Pagination properties
+  totalElements: number = 0;
+  pageSize: number = 10;
+  currentPage: number = 0;
+  isLoading: boolean = false;
+  
+  // Search mode - if true, load all courses for client-side filtering
+  searchMode: boolean = false;
 
-  // Filter options
-  boardOptions = ['State', 'CBSE', 'ICSE'];
-  mediumOptions = ['English','Kannada', 'Hindi', 'Telugu'];
-  gradeOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10','11','12'];
-  subjectOptions = [
-    'English', 'Kannada', 'Hindi', 'Maths', 'Science', 'Social', 
-    'Physics', 'Chemistry', 'Biology', 'History','Artificial Intelligence',
-    'Cloud Computing','Data Science','Cyber Security',
-    'Digital Marketing','Entrepreneurship','Ethical Hacking','Graphic Design',
-    'Human Resource Management',
-    'International Business','Java','JavaScript','Machine Learning','Marketing',
-    'Microsoft Office',
-    'Network Security','Python','Robotics','Software Development',
-    'Web Development','AI and Machine Learning','Blockchain','Cybersecurity',
-    'Data Analytics','Digital Marketing','Entrepreneurship','Ethical Hacking',
-    'Graphic Design','Human Resource Management','International Business','Java',
-    'JavaScript','Machine Learning','Marketing','Microsoft Office',
-    'Network Security','Python','Robotics','Software Development','Web Development', 
-    'Geography', 'Civics', 'Computer'
-  ];
+  // Filter options - will be loaded from backend
+  boardOptions: string[] = [];
+  mediumOptions: string[] = [];
+  gradeOptions: string[] = [];
+  subjectOptions: string[] = [];
+  filterOptionsLoading: boolean = true;
 
   constructor(
     private courseService: CourseService,
+    private filterOptionsService: FilterOptionsService,
     private router: Router,
     private snackBar: MatSnackBar,
     private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
+    this.loadFilterOptions();
     this.loadCourses();
   }
 
-  loadCourses(): void {
-    this.courseService.getAllCourses().subscribe({
-      next: (courses) => {
-        this.courses = Array.isArray(courses) ? courses : [];
-        this.applyFilters();
+  loadFilterOptions(): void {
+    this.filterOptionsLoading = true;
+    this.filterOptionsService.getFilterOptions().subscribe({
+      next: (options: FilterOptions) => {
+        this.boardOptions = options.boards;
+        this.mediumOptions = options.mediums;
+        this.gradeOptions = options.grades;
+        this.subjectOptions = options.subjects;
+        this.filterOptionsLoading = false;
+        console.log('Filter options loaded:', options);
       },
       error: (error) => {
-        console.error('Error loading courses:', error);
-        this.courses = [];
-        this.filteredCourses = [];
+        console.error('Error loading filter options:', error);
+        // Fallback to hardcoded values if API fails
+        this.boardOptions = ['State', 'CBSE', 'ICSE'];
+        this.mediumOptions = ['English', 'Kannada', 'Hindi', 'Telugu'];
+        this.gradeOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+        this.subjectOptions = [
+          'English', 'Kannada', 'Hindi', 'Maths', 'Science', 'Social', 
+          'Physics', 'Chemistry', 'Biology', 'History', 'Geography', 'Civics', 'Computer'
+        ];
+        this.filterOptionsLoading = false;
+        this.snackBar.open('Using fallback filter options', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top'
+        });
       }
     });
+  }
+
+  loadCourses(): void {
+    this.isLoading = true;
+    
+    if (this.searchMode || this.searchTerm || this.hasActiveFilters()) {
+      // Load all courses for client-side filtering
+      this.courseService.getAllCoursesSimple().subscribe({
+        next: (courses) => {
+          this.courses = Array.isArray(courses) ? courses : [];
+          this.totalElements = this.courses.length;
+          this.applyFilters();
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading courses:', error);
+          this.courses = [];
+          this.filteredCourses = [];
+          this.totalElements = 0;
+          this.isLoading = false;
+        }
+      });
+    } else {
+      // Load paginated courses
+      this.courseService.getAllCourses(this.currentPage, this.pageSize).subscribe({
+        next: (response) => {
+          this.courses = Array.isArray(response.content) ? response.content : [];
+          this.totalElements = response.totalElements || 0;
+          this.filteredCourses = [...this.courses]; // No filtering in pagination mode
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error loading courses:', error);
+          this.courses = [];
+          this.filteredCourses = [];
+          this.totalElements = 0;
+          this.isLoading = false;
+        }
+      });
+    }
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.filters.board || this.filters.medium || this.filters.grade || this.filters.subject);
   }
 
   applyFilters(): void {
@@ -130,17 +193,29 @@ export class CourseListComponent implements OnInit {
   }
 
   onSearchChange(): void {
-    this.applyFilters();
+    this.searchMode = !!this.searchTerm;
+    this.currentPage = 0; // Reset to first page when searching
+    this.loadCourses();
   }
 
   onFilterChange(): void {
-    this.applyFilters();
+    this.searchMode = this.hasActiveFilters();
+    this.currentPage = 0; // Reset to first page when filtering
+    this.loadCourses();
   }
 
   clearFilters(): void {
     this.searchTerm = '';
     this.filters = {};
-    this.applyFilters();
+    this.searchMode = false;
+    this.currentPage = 0;
+    this.loadCourses();
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadCourses();
   }
 
   navigateToCourse(courseId: string): void {
@@ -188,6 +263,42 @@ export class CourseListComponent implements OnInit {
         });
       }
     });
+  }
+
+  getRandomCourseImage(course: Course): string {
+    // Generate a consistent design pattern based on course name
+    const seed = this.hashCode(course.name + course.id);
+    const designIndex = Math.abs(seed) % 12; // 12 different design patterns
+    return this.getDesignPattern(designIndex);
+  }
+
+  private getDesignPattern(index: number): string {
+    const patterns = [
+      // Gradient patterns
+      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+      'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+      'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+      'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
+      'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
+      'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)',
+      'linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%)',
+      'linear-gradient(135deg, #ff8a80 0%, #ff80ab 100%)',
+      'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)'
+    ];
+    return patterns[index];
+  }
+
+  private hashCode(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
   }
 }
 

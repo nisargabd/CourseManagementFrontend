@@ -11,8 +11,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CourseService } from '../../services/course.service';
 import { UnitService } from '../../services/unit.service';
+import { FilterOptionsService, FilterOptions } from '../../services/filter-options.service';
 import { Course } from '../../models/course.model';
 import { Unit } from '../../models/unit.model';
 
@@ -30,7 +32,8 @@ import { Unit } from '../../models/unit.model';
     MatChipsModule,
     MatIconModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './course-form.component.html',
   styleUrls: ['./course-form.component.scss']
@@ -44,31 +47,18 @@ export class CourseFormComponent implements OnInit {
   selectedUnits: string[] = [];
   loading = true;
 
-  // Form options
-  boardOptions = ['State', 'CBSE', 'ICSE'];
-  mediumOptions = ['English','Kannada', 'Hindi', 'Telugu'];
-  gradeOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10','11','12'];
-  subjectOptions = [
-    'English', 'Kannada', 'Hindi', 'Maths', 'Science', 'Social', 
-    'Physics', 'Chemistry', 'Biology', 'History','Artificial Intelligence',
-    'Cloud Computing','Data Science','Cyber Security',
-    'Digital Marketing','Entrepreneurship','Ethical Hacking','Graphic Design',
-    'Human Resource Management',
-    'International Business','Java','JavaScript','Machine Learning','Marketing',
-    'Microsoft Office',
-    'Network Security','Python','Robotics','Software Development',
-    'Web Development','AI and Machine Learning','Blockchain','Cybersecurity',
-    'Data Analytics','Digital Marketing','Entrepreneurship','Ethical Hacking',
-    'Graphic Design','Human Resource Management','International Business','Java',
-    'JavaScript','Machine Learning','Marketing','Microsoft Office',
-    'Network Security','Python','Robotics','Software Development','Web Development', 
-    'Geography', 'Civics', 'Computer'
-  ];
+  // Form options - will be loaded from backend
+  boardOptions: string[] = [];
+  mediumOptions: string[] = [];
+  gradeOptions: string[] = [];
+  subjectOptions: string[] = [];
+  filterOptionsLoading: boolean = true;
 
   constructor(
     private fb: FormBuilder,
     private courseService: CourseService,
     private unitService: UnitService,
+    private filterOptionsService: FilterOptionsService,
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
@@ -88,6 +78,9 @@ export class CourseFormComponent implements OnInit {
   ngOnInit(): void {
     console.log('CourseFormComponent ngOnInit called');
     
+    // Load filter options first
+    this.loadFilterOptions();
+    
     // Get course ID from route
     this.courseId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!this.courseId;
@@ -101,6 +94,37 @@ export class CourseFormComponent implements OnInit {
       this.loading = false;
       this.loadAvailableUnits();
     }
+  }
+
+  loadFilterOptions(): void {
+    this.filterOptionsLoading = true;
+    this.filterOptionsService.getFilterOptions().subscribe({
+      next: (options: FilterOptions) => {
+        this.boardOptions = options.boards;
+        this.mediumOptions = options.mediums;
+        this.gradeOptions = options.grades;
+        this.subjectOptions = options.subjects;
+        this.filterOptionsLoading = false;
+        console.log('Filter options loaded in form:', options);
+      },
+      error: (error) => {
+        console.error('Error loading filter options:', error);
+        // Fallback to hardcoded values if API fails
+        this.boardOptions = ['State', 'CBSE', 'ICSE'];
+        this.mediumOptions = ['English', 'Kannada', 'Hindi', 'Telugu'];
+        this.gradeOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+        this.subjectOptions = [
+          'English', 'Kannada', 'Hindi', 'Maths', 'Science', 'Social', 
+          'Physics', 'Chemistry', 'Biology', 'History', 'Geography', 'Civics', 'Computer'
+        ];
+        this.filterOptionsLoading = false;
+        this.snackBar.open('Using fallback filter options', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top'
+        });
+      }
+    });
   }
 
   loadCourseForEdit(): void {

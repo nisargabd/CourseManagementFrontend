@@ -34,8 +34,12 @@ export class CourseService {
 
   constructor(private http: HttpClient) { }
 
-  getAllCourses(): Observable<Course[]> {
-    return this.http.get<PaginatedResponse<Course>>(`${this.baseUrl}/courses/get`)
+  getAllCourses(page: number = 0, size: number = 10): Observable<PaginatedResponse<Course>> {
+    return this.http.get<PaginatedResponse<Course>>(`${this.baseUrl}/courses/get?page=${page}&size=${size}`);
+  }
+
+  getAllCoursesSimple(): Observable<Course[]> {
+    return this.http.get<PaginatedResponse<Course>>(`${this.baseUrl}/courses/get?page=0&size=1000`)
       .pipe(
         map(response => response.content || [])
       );
