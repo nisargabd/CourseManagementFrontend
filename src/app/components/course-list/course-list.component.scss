@@ -108,6 +108,11 @@
           border: 2px solid rgba(255, 255, 255, 0.3);
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(10px);
+          
+          // Ensure dropdown opens downward
+          .mat-mdc-select-trigger {
+            position: relative;
+          }
 
           &:hover {
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
@@ -132,6 +137,8 @@
           position: relative;
           overflow: visible;
           z-index: 1;
+          display: flex;
+          align-items: center;
         }
 
         .mat-mdc-form-field-focus-overlay {
@@ -185,12 +192,28 @@
           font-size: 15px;
           font-weight: 600;
           padding: 2px 0;
+          padding-left: 16px; // Increase padding to create gap from icon
         }
 
         .mat-mdc-select-placeholder {
           color: #34495e;
           font-size: 15px;
           font-weight: 500;
+          padding-left: 16px; // Increase padding to create gap from icon
+        }
+
+        // Icon alignment
+        .mat-mdc-form-field-icon-prefix {
+          color: #ffd700;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          margin-right: 8px; // Reduce margin to create proper gap
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          top: 2px; // Fine-tune vertical alignment
         }
 
         .mat-mdc-form-field-icon-suffix {
@@ -209,9 +232,14 @@
           border: 2px solid rgba(102, 126, 234, 0.2);
           max-height: 320px;
           z-index: 1000;
-          margin-top: 12px;
+          margin-top: 8px; // Reduce margin to ensure downward opening
           overflow: hidden;
           backdrop-filter: blur(20px);
+          position: absolute;
+          top: 100%; // Ensure dropdown opens below the field
+          left: 0;
+          right: 0;
+          transform: translateY(0); // Reset any transforms that might cause upward opening
         }
 
         .mat-mdc-option {
@@ -250,6 +278,22 @@
           
           .mat-mdc-form-field-icon-suffix {
             color: #1976d2;
+          }
+        }
+
+        // Force dropdown to open downward
+        .mat-mdc-select-panel-above {
+          transform: translateY(0) !important;
+          top: 100% !important;
+          bottom: auto !important;
+        }
+
+        // Override any upward positioning
+        .cdk-overlay-pane {
+          .mat-mdc-select-panel {
+            transform: translateY(0) !important;
+            top: 100% !important;
+            bottom: auto !important;
           }
         }
       }
@@ -306,10 +350,10 @@
 // Top Bar
 .top-bar {
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  padding: 16px 24px;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  justify-content: space-between;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   position: sticky;
   top: 0;
@@ -319,7 +363,7 @@
 
   .search-container {
     flex: 1;
-    max-width: 600px;
+    max-width: 500px;
 
     .search-field {
       width: 100%;
@@ -347,8 +391,8 @@
         .mat-mdc-text-field-wrapper {
           background: transparent;
           border-radius: 8px;
-          padding: 8px 16px;
-          min-height: 40px;
+          padding: 6px 12px;
+          min-height: 32px;
           position: relative;
           z-index: 1;
         }
@@ -360,7 +404,7 @@
         .mat-mdc-form-field-label {
           color: #5f6368;
           font-weight: 500;
-          font-size: 16px;
+          font-size: 14px;
         }
 
         .mat-mdc-form-field.mat-focused {
@@ -376,18 +420,18 @@
 
       .search-icon {
         color: #667eea;
-        margin-right: 12px;
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
+        margin-right: 8px;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
         transition: all 0.3s ease;
         z-index: 2;
         position: relative;
       }
 
       input {
-        font-size: 16px;
-        padding: 4px 0;
+        font-size: 14px;
+        padding: 2px 0;
         color: #2c3e50;
         font-weight: 500;
         letter-spacing: 0.2px;
@@ -414,16 +458,17 @@
   }
 
   .add-course-btn {
-    padding: 0 24px;
-    height: 40px;
-    font-size: 14px;
+    padding: 0 16px;
+    height: 32px;
+    font-size: 13px;
     font-weight: 600;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
+    min-width: 140px;
 
     &:hover {
       transform: translateY(-1px);
@@ -436,10 +481,10 @@
     }
 
     mat-icon {
-      margin-right: 12px;
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
+      margin-right: 6px;
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
     }
   }
 }
@@ -654,11 +699,101 @@
 .pagination-container {
   margin-top: 32px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   background: white;
   border-radius: 12px;
-  padding: 16px;
+  padding: 20px 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(102, 126, 234, 0.1);
+
+  .pagination-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .rows-per-page-label {
+      color: #5f6368;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .page-size-select {
+      min-width: 80px;
+    }
+  }
+
+  .pagination-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+
+    .pagination-info {
+      color: #5f6368;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .pagination-numbers {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .nav-button {
+        color: #1976d2;
+        transition: all 0.3s ease;
+
+        &:hover:not(:disabled) {
+          background-color: rgba(25, 118, 210, 0.1);
+          transform: scale(1.1);
+        }
+
+        &:disabled {
+          color: #dadce0;
+        }
+      }
+
+      .page-numbers {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin: 0 8px;
+
+        .page-number {
+          min-width: 40px;
+          height: 40px;
+          border-radius: 8px;
+          font-weight: 500;
+          font-size: 14px;
+          transition: all 0.3s ease;
+          color: #5f6368;
+          background: transparent;
+          border: 1px solid transparent;
+
+          &:hover:not(:disabled) {
+            background-color: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+          }
+
+          &.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+          }
+
+          &.disabled {
+            color: #dadce0;
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
 
   ::ng-deep {
     .mat-mdc-paginator {

@@ -80,10 +80,12 @@
         </mat-form-field>
       </div>
       
-      <button mat-raised-button color="primary" class="add-course-btn" (click)="addNewCourse()">
-        <mat-icon>add_circle</mat-icon>
-        Add New Course
-      </button>
+      <div class="add-course-container">
+        <button mat-raised-button color="primary" class="add-course-btn" (click)="addNewCourse()">
+          <mat-icon>add_circle</mat-icon>
+          Add New Course
+        </button>
+      </div>
     </div>
 
     <!-- Course Cards Grid -->
@@ -145,14 +147,44 @@
 
       <!-- Pagination Controls -->
       <div *ngIf="!isLoading && !searchMode && totalElements > pageSize" class="pagination-container">
-        <mat-paginator 
-          [length]="totalElements"
-          [pageSize]="pageSize"
-          [pageIndex]="currentPage"
-          [pageSizeOptions]="[5, 10, 25, 50]"
-          (page)="onPageChange($event)"
-          showFirstLastButtons>
-        </mat-paginator>
+        <div class="pagination-left">
+          <span class="rows-per-page-label">Rows per page:</span>
+          <mat-select [(value)]="pageSize" (selectionChange)="onPageSizeChange($event.value)" class="page-size-select">
+            <mat-option *ngFor="let size of [5, 10, 25, 50]" [value]="size">{{ size }}</mat-option>
+          </mat-select>
+        </div>
+        <div class="pagination-center">
+          <span class="pagination-info">{{ getPaginationInfo() }}</span>
+          <div class="pagination-numbers">
+            <button mat-icon-button (click)="goToFirstPage()" [disabled]="currentPage === 0" class="nav-button">
+              <mat-icon>first_page</mat-icon>
+            </button>
+            <button mat-icon-button (click)="goToPreviousPage()" [disabled]="currentPage === 0" class="nav-button">
+              <mat-icon>chevron_left</mat-icon>
+            </button>
+            
+            <!-- Page Numbers -->
+            <div class="page-numbers">
+              <button 
+                *ngFor="let page of getPageNumbers()" 
+                mat-button 
+                [class.active]="page === currentPage"
+                [class.disabled]="page === '...'"
+                (click)="goToPage(page)"
+                [disabled]="page === '...'"
+                class="page-number">
+                {{ page }}
+              </button>
+            </div>
+            
+            <button mat-icon-button (click)="goToNextPage()" [disabled]="currentPage >= getTotalPages() - 1" class="nav-button">
+              <mat-icon>chevron_right</mat-icon>
+            </button>
+            <button mat-icon-button (click)="goToLastPage()" [disabled]="currentPage >= getTotalPages() - 1" class="nav-button">
+              <mat-icon>last_page</mat-icon>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div *ngIf="!isLoading && filteredCourses.length === 0" class="no-results">
