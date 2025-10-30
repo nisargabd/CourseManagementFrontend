@@ -24,13 +24,13 @@
       </form>
     </mat-card-content>
 
-    <mat-card-actions>
-      <button mat-raised-button color="primary" 
+    <mat-card-actions class="actions-right">
+      <button mat-raised-button class="app-btn app-btn--primary"
               [disabled]="unitForm.invalid || isSubmitting"
               (click)="onSubmit()">
         {{ isSubmitting ? 'Creating...' : 'Create Unit' }}
       </button>
-      <button mat-button (click)="onBackToCourses()">
+      <button mat-button class="app-btn app-btn--ghost" (click)="onBackToCourses()">
         Back to Courses
       </button>
     </mat-card-actions>

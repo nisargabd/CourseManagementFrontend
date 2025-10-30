@@ -8,10 +8,7 @@
     
     <div class="sidebar-content">
       <div class="filter-section">
-        <h3>
-          <mat-icon>filter_list</mat-icon>
-          Filters
-        </h3>
+        <h3>Filters</h3>
 
         <!-- Loading state for filters -->
         <div *ngIf="filterOptionsLoading" class="filter-loading">
@@ -27,7 +24,6 @@
               <mat-option value="">All Boards</mat-option>
               <mat-option *ngFor="let board of boardOptions" [value]="board">{{ board }}</mat-option>
             </mat-select>
-            <mat-icon matPrefix>account_balance</mat-icon>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="filter-field">
@@ -36,7 +32,6 @@
               <mat-option value="">All Mediums</mat-option>
               <mat-option *ngFor="let medium of mediumOptions" [value]="medium">{{ medium }}</mat-option>
             </mat-select>
-            <mat-icon matPrefix>language</mat-icon>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="filter-field">
@@ -45,7 +40,6 @@
               <mat-option value="">All Grades</mat-option>
               <mat-option *ngFor="let grade of gradeOptions" [value]="grade">{{ grade }}</mat-option>
             </mat-select>
-            <mat-icon matPrefix>school</mat-icon>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="filter-field">
@@ -54,14 +48,12 @@
               <mat-option value="">All Subjects</mat-option>
               <mat-option *ngFor="let subject of subjectOptions" [value]="subject">{{ subject }}</mat-option>
             </mat-select>
-            <mat-icon matPrefix>book</mat-icon>
           </mat-form-field>
         </div>
 
         <!-- Clear All Button at Bottom -->
         <div class="clear-button-container">
           <button mat-stroked-button class="clear-button" (click)="clearFilters()">
-            <mat-icon>clear_all</mat-icon>
             Clear All
           </button>
         </div>
@@ -129,17 +121,14 @@
             </div>
           </mat-card-content>
           
-          <mat-card-actions class="card-actions">
-            <button mat-button color="primary" (click)="navigateToCourse(course.id!); $event.stopPropagation()">
-              <mat-icon>visibility</mat-icon>
-              View
-            </button>
-            <button mat-button (click)="editCourse(course.id!); $event.stopPropagation()">
+          <mat-card-actions class="card-actions actions-right">
+            <button mat-button class="app-btn app-btn--primary" (click)="editCourse(course.id!); $event.stopPropagation()">
               <mat-icon>edit</mat-icon>
               Edit
             </button>
-            <button mat-icon-button color="warn" (click)="deleteCourse(course.id!); $event.stopPropagation()">
+            <button mat-button class="app-btn app-btn--warn" (click)="deleteCourse(course.id!); $event.stopPropagation()">
               <mat-icon>delete</mat-icon>
+              Delete
             </button>
           </mat-card-actions>
         </mat-card>

@@ -446,7 +446,7 @@ export class AddUnitDialogComponent {
   ) {
     this.unitForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
-      content: ['', [Validators.required, Validators.minLength(10)]]
+      content: ['', [Validators.required, Validators.minLength(5)]]
     });
   }
 

@@ -9,7 +9,8 @@
 .back-button {
   margin-bottom: 24px;
 
-  button {
+  /* Keep legacy styles only for non-app buttons */
+  button:not(.app-btn) {
     background: white;
     border-radius: 8px;
     padding: 8px 20px;
@@ -348,6 +349,7 @@ mat-card-actions {
   display: flex;
   gap: 12px;
   
+  /* Generic button sizing without overriding app button backgrounds */
   button {
     border-radius: 8px;
     padding: 0 24px;
@@ -359,6 +361,7 @@ mat-card-actions {
       margin-right: 8px;
     }
 
+    /* Legacy color attributes support; global .app-btn classes handle new scheme */
     &[color="primary"] {
       box-shadow: 0 2px 6px rgba(25, 118, 210, 0.3);
 

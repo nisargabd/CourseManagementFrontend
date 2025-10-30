@@ -1,7 +1,7 @@
 <div class="course-detail-container">
   <!-- Back Button -->
-  <div class="back-button">
-    <button mat-button (click)="goBack()">
+  <div class="back-button actions-right">
+    <button mat-button class="app-btn app-btn--ghost" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
       Back to Courses
     </button>
@@ -18,7 +18,7 @@
     <mat-icon>error</mat-icon>
     <h3>Error Loading Course</h3>
     <p>There was an error loading the course details. Please try again.</p>
-    <button mat-raised-button color="primary" (click)="goBack()">
+    <button mat-raised-button class="app-btn app-btn--primary" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
       Back to Courses
     </button>
@@ -113,12 +113,12 @@
         </div>
       </mat-card-content>
       
-      <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="editCourse()">
+      <mat-card-actions class="actions-right">
+        <button mat-raised-button class="app-btn app-btn--primary" (click)="editCourse()">
           <mat-icon>edit</mat-icon>
           Edit Course
         </button>
-        <button mat-raised-button color="warn" (click)="deleteCourse()">
+        <button mat-raised-button class="app-btn app-btn--warn" (click)="deleteCourse()">
           <mat-icon>delete</mat-icon>
           Delete Course
         </button>
@@ -131,7 +131,7 @@
     <mat-icon>search_off</mat-icon>
     <h3>Course Not Found</h3>
     <p>The course you're looking for doesn't exist or has been removed.</p>
-    <button mat-raised-button color="primary" (click)="goBack()">
+    <button mat-raised-button class="app-btn app-btn--primary" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
       Back to Courses
     </button>

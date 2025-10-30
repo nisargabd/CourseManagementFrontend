@@ -1,10 +1,14 @@
 <div class="course-form-container">
+  <!-- Back Button -->
+  <div class="back-button actions-right">
+    <button mat-button class="app-btn app-btn--ghost" (click)="onCancel()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Courses
+    </button>
+  </div>
   <!-- Header -->
   <div class="form-header">
     <h1>{{ pageTitle }}</h1>
-    <button mat-icon-button (click)="onCancel()" class="close-button">
-      <mat-icon>close</mat-icon>
-    </button>
   </div>
 
   <!-- Loading State -->
@@ -101,9 +105,9 @@
 
         <!-- Units Selection -->
         <div class="units-section">
-          <div class="units-header">
+          <div class="units-header actions-right">
             <h3>Units</h3>
-            <button mat-stroked-button type="button" color="primary" (click)="openAddUnitDialog()">
+            <button mat-raised-button type="button" class="app-btn app-btn--primary" (click)="openAddUnitDialog()">
               <mat-icon>add</mat-icon>
               Add New Unit
             </button>
@@ -139,12 +143,12 @@
         </div>
       </mat-card-content>
 
-      <mat-card-actions align="end">
-        <button mat-button type="button" (click)="onCancel()">
+      <mat-card-actions class="actions-right">
+        <button mat-button type="button" class="app-btn app-btn--ghost" (click)="onCancel()">
           <mat-icon>cancel</mat-icon>
           Cancel
         </button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!courseForm.valid || isSubmitting">
+        <button mat-raised-button class="app-btn app-btn--primary" type="submit" [disabled]="!courseForm.valid || isSubmitting">
           <mat-icon>{{ isEditMode ? 'update' : 'add' }}</mat-icon>
           {{ isSubmitting ? 'Saving...' : submitButtonText }}
         </button>

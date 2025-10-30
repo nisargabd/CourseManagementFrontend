@@ -98,13 +98,17 @@
       margin-bottom: 12px;
 
       ::ng-deep {
+        .mat-mdc-form-field-infix {
+          padding: 2px 0; // small padding for proper baseline alignment
+          min-height: 0;
+        }
         .mat-mdc-form-field {
           background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
           border-radius: 16px;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
           overflow: visible;
           position: relative;
-          margin-top: 16px;
+          margin-top: 6px;
           border: 2px solid rgba(255, 255, 255, 0.3);
           transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
           backdrop-filter: blur(10px);
@@ -132,17 +136,22 @@
         .mat-mdc-text-field-wrapper {
           background: transparent;
           border-radius: 16px;
-          min-height: 56px;
-          padding: 12px 20px;
+          min-height: 36px; // slightly reduced height
+          padding: 4px 10px; // minimal but not zero
           position: relative;
           overflow: visible;
           z-index: 1;
           display: flex;
           align-items: center;
         }
+        .mat-mdc-select-trigger {
+          min-height: 28px; // align select placeholder text
+          line-height: 28px;
+        }
 
-        .mat-mdc-form-field-focus-overlay {
-          background: transparent;
+        .mat-mdc-input-element {
+          line-height: 22px; // align input text and placeholder
+          height: 22px;
         }
 
         .mat-mdc-form-field-subscript-wrapper {
@@ -191,15 +200,15 @@
           color: #2c3e50;
           font-size: 15px;
           font-weight: 600;
-          padding: 2px 0;
-          padding-left: 16px; // Increase padding to create gap from icon
+          padding: 2px 0; // minimal to avoid clipping text
+          padding-left: 0; 
         }
 
         .mat-mdc-select-placeholder {
           color: #34495e;
           font-size: 15px;
           font-weight: 500;
-          padding-left: 16px; // Increase padding to create gap from icon
+          padding-left: 0; 
         }
 
         // Icon alignment
@@ -208,12 +217,12 @@
           font-size: 20px;
           width: 20px;
           height: 20px;
-          margin-right: 8px; // Reduce margin to create proper gap
+          margin-right: 0; 
           display: flex;
           align-items: center;
           justify-content: center;
           position: relative;
-          top: 2px; // Fine-tune vertical alignment
+          top: 2px; 
         }
 
         .mat-mdc-form-field-icon-suffix {
@@ -230,33 +239,33 @@
           border-radius: 16px;
           box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
           border: 2px solid rgba(102, 126, 234, 0.2);
-          max-height: 320px;
+          max-height: 280px;
           z-index: 1000;
-          margin-top: 8px; // Reduce margin to ensure downward opening
+          margin-top: 4px; 
           overflow: hidden;
           backdrop-filter: blur(20px);
           position: absolute;
-          top: 100%; // Ensure dropdown opens below the field
+          top: 100%; 
           left: 0;
           right: 0;
-          transform: translateY(0); // Reset any transforms that might cause upward opening
+          transform: translateY(0); 
         }
 
         .mat-mdc-option {
           color: #2c3e50;
           font-size: 15px;
           font-weight: 500;
-          padding: 16px 20px;
-          min-height: 52px;
-          border-radius: 12px;
-          margin: 4px 12px;
+          padding: 8px 12px;
+          min-height: 36px;
+          border-radius: 10px;
+          margin: 2px 8px;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
 
           &:hover {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            transform: translateX(4px) scale(1.02);
+            transform: translateX(2px) scale(1.01);
             box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
             font-weight: 600;
           }
@@ -265,8 +274,8 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             font-weight: 700;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
-            transform: scale(1.05);
+            box-shadow: 0 6px 24px rgba(102, 126, 234, 0.35);
+            transform: scale(1.02);
             letter-spacing: 0.5px;
           }
         }
@@ -372,10 +381,24 @@
       ::ng-deep {
         .mat-mdc-form-field {
           background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-          border-radius: 8px;
+          border-radius: 20%; 
           box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           border: 1px solid rgba(102, 126, 234, 0.2);
+          /* no fixed height to allow a slimmer control */
+
+          /* Ensure all MDC outline/flex parts are pill-shaped */
+          .mat-mdc-form-field-flex,
+          .mdc-notched-outline,
+          .mdc-notched-outline__leading,
+          .mdc-notched-outline__notch,
+          .mdc-notched-outline__trailing {
+            border-radius: 9999px !important;
+          }
+
+          .mat-mdc-form-field-focus-overlay {
+            border-radius: 9999px !important;
+          }
 
           &:hover {
             box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
@@ -383,18 +406,24 @@
           }
 
           &.mat-focused {
-            border-color: #667eea;
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.2);
+            background: white;
+            box-shadow: 0 6px 24px rgba(25, 118, 210, 0.2);
+            border: 2px solid #1976d2;
           }
         }
 
         .mat-mdc-text-field-wrapper {
           background: transparent;
-          border-radius: 8px;
-          padding: 6px 12px;
-          min-height: 32px;
+          border-radius: 9999px;
+          padding: 2px 8px; // extra slim
+          min-height: 24px; // target ~24px control height
           position: relative;
           z-index: 1;
+        }
+
+        .mat-mdc-input-element {
+          line-height: 20px; // align input text and placeholder
+          height: 20px;
         }
 
         .mat-mdc-form-field-subscript-wrapper {
@@ -431,7 +460,8 @@
 
       input {
         font-size: 14px;
-        padding: 2px 0;
+        padding: 0; // rely on wrapper padding
+        line-height: 24px; // align placeholder vertically
         color: #2c3e50;
         font-weight: 500;
         letter-spacing: 0.2px;
@@ -647,18 +677,21 @@
     padding: 20px 24px;
     border-top: 2px solid rgba(102, 126, 234, 0.1);
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end; // align buttons to the right
+    gap: 12px; // consistent spacing between buttons
     align-items: center;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 
     button {
       font-size: 14px;
       font-weight: 700;
-      padding: 12px 20px;
+      padding: 10px 16px; // consistent compact padding
       border-radius: 12px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); // consistent background
+      color: #ffffff;
 
       &:hover {
         transform: translateY(-2px);
@@ -670,6 +703,7 @@
         width: 18px;
         height: 18px;
         margin-right: 8px;
+        color: #ffffff;
       }
     }
   }

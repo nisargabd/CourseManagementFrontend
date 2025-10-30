@@ -6,6 +6,56 @@ html, body {
   padding: 0;
 }
 
+/* App Button Utilities */
+.actions-right {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-btn {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-btn--primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: #fff !important;
+}
+
+.app-btn--warn {
+  background: linear-gradient(135deg, #e11d48 0%, #b91c1c 100%) !important;
+  color: #fff !important;
+}
+
+.app-btn--ghost {
+  background: transparent !important;
+  border: 1px solid rgba(32,33,36,0.15) !important;
+  color: #202124 !important;
+}
+
+.app-icon-btn {
+  border-radius: 10px !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%) !important;
+  color: #111827 !important;
+}
+
+/* Ensure Angular Material variants pick up our app-btn backgrounds */
+.mat-mdc-raised-button.app-btn,
+.mat-mdc-unelevated-button.app-btn,
+.mat-mdc-outlined-button.app-btn,
+.mat-mdc-button.app-btn {
+  --mdc-filled-button-container-color: transparent; /* neutralize */
+}
+
 body { 
   margin: 0; 
   font-family: 'Roboto', 'Segoe UI', 'Helvetica Neue', sans-serif;
