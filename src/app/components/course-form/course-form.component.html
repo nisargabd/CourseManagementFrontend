@@ -128,17 +128,18 @@
             <p>No units available. Click "Add New Unit" to create one.</p>
           </div>
 
-          <!-- Display selected units as chips -->
+          <!-- Display selected units as a vertical list with delete actions -->
           <div *ngIf="selectedUnits && selectedUnits.length > 0" class="selected-units">
-            <h4>Selected Units:</h4>
-            <mat-chip-set>
-              <mat-chip *ngFor="let unitId of selectedUnits">
-                {{ getUnitTitle(unitId) }}
-                <button matChipRemove (click)="removeUnit(unitId)">
-                  <mat-icon>cancel</mat-icon>
+            <h4>Selected Units</h4>
+            <div class="selected-units-list">
+              <div class="unit-item" *ngFor="let unitId of selectedUnits">
+                <div class="unit-title">{{ getUnitTitle(unitId) }}</div>
+                <button type="button" mat-button class="app-btn app-btn--warn delete-unit-btn" (click)="onDeleteUnitClick($event, unitId)">
+                  <mat-icon>delete</mat-icon>
+                  Delete Unit
                 </button>
-              </mat-chip>
-            </mat-chip-set>
+              </div>
+            </div>
           </div>
         </div>
       </mat-card-content>

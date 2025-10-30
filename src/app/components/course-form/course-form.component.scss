@@ -211,20 +211,32 @@
       margin-bottom: 12px;
     }
 
-    mat-chip {
-      background: #e3f2fd;
-      color: #1976d2;
-      font-weight: 500;
-      border-radius: 6px;
-      padding: 6px 10px;
+    .selected-units-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
 
-      &:hover {
-        background: #bbdefb;
-      }
+    /* Ensure each unit row is a single line with action on the far right */
+    .unit-item {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      width: 100%;
+      gap: 12px;
+    }
 
-      button mat-icon {
-        font-size: 16px;
-      }
+    .unit-title {
+      flex: 1 1 auto;
+      margin-right: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .delete-unit-btn {
+      margin-left: auto;
     }
   }
 }

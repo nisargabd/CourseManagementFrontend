@@ -11,6 +11,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CourseService } from '../../services/course.service';
 import { UnitService } from '../../services/unit.service';
@@ -34,6 +35,7 @@ import { Unit } from '../../models/unit.model';
     MatSnackBarModule,
     MatDialogModule,
     MatProgressSpinnerModule
+    ,ConfirmDialogComponent
   ],
   templateUrl: './course-form.component.html',
   styleUrls: ['./course-form.component.scss']
@@ -185,9 +187,15 @@ export class CourseFormComponent implements OnInit {
 
   loadAvailableUnits(): void {
     console.log('Loading available units...');
-    this.unitService.getAllUnits().subscribe({
+    if (!this.courseId) {
+      // In create mode, do not show global units; units are scoped per course
+      this.availableUnits = [];
+      return;
+    }
+
+    this.unitService.getUnitsByCourse(this.courseId).subscribe({
       next: (units) => {
-        console.log('Units loaded successfully:', units);
+        console.log('Units loaded successfully for course:', this.courseId, units);
         this.availableUnits = units || [];
       },
       error: (error) => {
@@ -358,6 +366,15 @@ export class CourseFormComponent implements OnInit {
   }
 
   openAddUnitDialog(): void {
+    if (!this.courseId) {
+      this.snackBar.open('Save the course first, then add units to it.', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top'
+      });
+      return;
+    }
+
     const dialogRef = this.dialog.open(AddUnitDialogComponent, {
       width: '500px',
       data: { courseId: this.courseId }
@@ -366,9 +383,48 @@ export class CourseFormComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         console.log('Unit dialog closed with result:', result);
-        this.loadAvailableUnits();
+        // If dialog returned the created unit, merge it immediately for better UX
+        if (result && result.id) {
+          const map = new Map<string, Unit>();
+          [...this.availableUnits, result as Unit].forEach(u => { if (u && u.id) map.set(u.id, u); });
+          this.availableUnits = Array.from(map.values());
+          // Auto-select the newly created unit
+          const newId = String(result.id);
+          if (!this.selectedUnits.includes(newId)) {
+            this.selectedUnits = [...this.selectedUnits, newId];
+          }
+        } else {
+          // Fallback: reload from API
+          this.loadAvailableUnits();
+        }
       }
     });
+  }
+
+  // Open confirm dialog and remove unit on confirm
+  confirmRemoveUnit(unitId: string): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: {
+        title: 'Remove Unit',
+        message: `Are you sure you want to remove "${this.getUnitTitle(unitId)}" from this course? This will not delete the unit from the database.`,
+        confirmText: 'Remove',
+        cancelText: 'Cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.removeUnit(unitId);
+      }
+    });
+  }
+
+  // Button handler to prevent overlapping clicks and open dialog
+  onDeleteUnitClick(event: Event, unitId: string): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.confirmRemoveUnit(unitId);
   }
 
   get pageTitle(): string {
@@ -469,7 +525,7 @@ export class AddUnitDialogComponent {
             horizontalPosition: 'right',
             verticalPosition: 'top'
           });
-          this.dialogRef.close(true);
+          this.dialogRef.close(createdUnit);
         },
         error: (error) => {
           console.error('Error creating unit:', error);

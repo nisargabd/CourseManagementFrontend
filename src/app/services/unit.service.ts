@@ -54,9 +54,9 @@ export class UnitService {
   }
 
   getUnitsByCourse(courseId: string): Observable<Unit[]> {
-    // For now, get all units and filter by courseId on frontend
-    // This can be optimized later with a proper backend endpoint
-    return this.getAllUnits();
+    return this.getAllUnits().pipe(
+      map(units => (units || []).filter(u => u.courseId === courseId))
+    );
   }
 
   getUnitById(id: string): Observable<Unit> {
