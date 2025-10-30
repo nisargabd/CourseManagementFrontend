@@ -50,7 +50,7 @@ export class CourseListComponent implements OnInit {
   
   // Pagination properties
   totalElements: number = 0;
-  pageSize: number = 10;
+  pageSize: number = 5;
   currentPage: number = 0;
   isLoading: boolean = false;
   
