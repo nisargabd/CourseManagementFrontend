@@ -107,6 +107,54 @@ export class CourseListComponent implements OnInit {
       }
     });
   }
+  onBoardChange(): void {
+  if (this.filters.board) {
+    const req = { board: this.filters.board };
+    this.filterOptionsService.getMediumsByBoard(req).subscribe({
+      next: (mediums) => {
+        this.mediumOptions = mediums;
+        this.filters.medium = '';
+        this.gradeOptions = [];
+        this.subjectOptions = [];
+      },
+      error: (err) => console.error('Error fetching mediums:', err)
+    });
+  }
+}
+
+onMediumChange(): void {
+  if (this.filters.board && this.filters.medium) {
+    const req = {
+      board: this.filters.board,
+      medium: [this.filters.medium]
+    };
+    this.filterOptionsService.getGradesByBoardAndMedium(req).subscribe({
+      next: (grades) => {
+        this.gradeOptions = grades;
+        this.filters.grade = '';
+        this.subjectOptions = [];
+      },
+      error: (err) => console.error('Error fetching grades:', err)
+    });
+  }
+}
+
+onGradeChange(): void {
+  if (this.filters.board && this.filters.medium && this.filters.grade) {
+    const req = {
+      board: this.filters.board,
+      medium: [this.filters.medium],
+      grade: [this.filters.grade]
+    };
+    this.filterOptionsService.getSubjectsByBoardMediumAndGrade(req).subscribe({
+      next: (subjects) => {
+        this.subjectOptions = subjects;
+      },
+      error: (err) => console.error('Error fetching subjects:', err)
+    });
+  }
+}
+
 
   loadCourses(): void {
     this.isLoading = true;
@@ -116,8 +164,9 @@ export class CourseListComponent implements OnInit {
       this.courseService.getAllCoursesSimple().subscribe({
         next: (courses) => {
           this.courses = Array.isArray(courses) ? courses : [];
-          this.totalElements = this.courses.length;
           this.applyFilters();
+          // In search/filter mode, total should reflect filtered items count
+          this.totalElements = this.filteredCourses.length;
           this.isLoading = false;
         },
         error: (error) => {
@@ -190,6 +239,14 @@ export class CourseListComponent implements OnInit {
 
       return true;
     });
+
+    // Keep totals in sync and clamp page index after filtering
+    const total = this.filteredCourses.length;
+    this.totalElements = total;
+    const maxPageIndex = Math.max(0, Math.ceil(total / this.pageSize) - 1);
+    if (this.currentPage > maxPageIndex) {
+      this.currentPage = 0;
+    }
   }
 
   onSearchChange(): void {
@@ -215,34 +272,47 @@ export class CourseListComponent implements OnInit {
   onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.loadCourses();
+    if (!this.searchMode) {
+      this.loadCourses();
+    }
   }
 
   onPageSizeChange(newPageSize: number): void {
     this.pageSize = newPageSize;
     this.currentPage = 0; // Reset to first page when changing page size
-    this.loadCourses();
+    if (!this.searchMode) {
+      this.loadCourses();
+    }
   }
 
   getPaginationInfo(): string {
+    const total = this.searchMode ? this.filteredCourses.length : this.totalElements;
+    if (total === 0) {
+      return `0-0 of 0`;
+    }
     const start = this.currentPage * this.pageSize + 1;
-    const end = Math.min((this.currentPage + 1) * this.pageSize, this.totalElements);
-    return `${start}-${end} of ${this.totalElements}`;
+    const end = Math.min((this.currentPage + 1) * this.pageSize, total);
+    return `${start}-${end} of ${total}`;
   }
 
   getTotalPages(): number {
-    return Math.ceil(this.totalElements / this.pageSize);
+    const total = this.searchMode ? this.filteredCourses.length : this.totalElements;
+    return Math.ceil(total / this.pageSize);
   }
 
   goToFirstPage(): void {
     this.currentPage = 0;
-    this.loadCourses();
+    if (!this.searchMode) {
+      this.loadCourses();
+    }
   }
 
   goToPreviousPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
-      this.loadCourses();
+      if (!this.searchMode) {
+        this.loadCourses();
+      }
     }
   }
 
@@ -250,14 +320,18 @@ export class CourseListComponent implements OnInit {
     const totalPages = this.getTotalPages();
     if (this.currentPage < totalPages - 1) {
       this.currentPage++;
-      this.loadCourses();
+      if (!this.searchMode) {
+        this.loadCourses();
+      }
     }
   }
 
   goToLastPage(): void {
     const totalPages = this.getTotalPages();
     this.currentPage = totalPages - 1;
-    this.loadCourses();
+    if (!this.searchMode) {
+      this.loadCourses();
+    }
   }
 
   getPageNumbers(): (number | string)[] {
@@ -304,8 +378,20 @@ export class CourseListComponent implements OnInit {
   goToPage(page: number | string): void {
     if (typeof page === 'number' && page !== this.currentPage) {
       this.currentPage = page;
-      this.loadCourses();
+      if (!this.searchMode) {
+        this.loadCourses();
+      }
     }
+  }
+
+  // Returns the list of courses to display on the current page
+  getDisplayedCourses(): Course[] {
+    if (this.searchMode) {
+      const start = this.currentPage * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredCourses.slice(start, end);
+    }
+    return this.filteredCourses;
   }
 
   navigateToCourse(courseId: string): void {
@@ -391,4 +477,3 @@ export class CourseListComponent implements OnInit {
     return hash;
   }
 }
-
