@@ -112,7 +112,7 @@ export class CourseFormComponent implements OnInit {
       error: (error) => {
         console.error('Error loading filter options:', error);
         // Fallback to hardcoded values if API fails
-        this.boardOptions = ['State', 'CBSE', 'ICSE'];
+        this.boardOptions = ['XYZ','State', 'CBSE', 'ICSE'];
         this.mediumOptions = ['English', 'Kannada', 'Hindi', 'Telugu'];
         this.gradeOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
         this.subjectOptions = [
